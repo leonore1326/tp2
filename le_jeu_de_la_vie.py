@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.cm as cm
 from copy import deepcopy
+import numpy as np
+from random import random
 
 def matrice_initiale():    
     situation_initiale=open("/Users/leonore/Desktop/Programmation/input.txt","r")
@@ -23,6 +25,20 @@ def matrice_initiale():
     #for i in range(len(matrice_initiale)):
         #print(matrice_initiale[i],'\n')
     return(matrice_initiale)
+
+def matrice0_aleatoire(n,pourcentage_de_cellules_vivantes):
+    mat=np.zeros((n,n))
+    for k in range (n):
+        for j in range(n):
+            cellule=random()
+            if cellule>(1-(pourcentage_de_cellules_vivantes/100)):
+                cellule=1
+                mat[k][j]=1
+    return(mat)
+        
+    
+    
+    
 
 def voisines(abscisse,ordonnee,matrice):
     somme=matrice[abscisse-1][ordonnee+1]+matrice[abscisse][ordonnee+1]+matrice[abscisse+1][ordonnee+1]
@@ -45,21 +61,32 @@ def evolution(matrice):
     matrice=copie
     return(matrice)
 
-def updater (temps, img, M): #pour l'interface graphique on crée une fonction qui fait évoluer la matrice 
-    for i in range(temps): #et qui met à jour l'image correspondante
-        M=evolution(M)
-        img.set_data(M)
-    return img        
+
+jeu_de_la_vie=matrice0_aleatoire(30, 15)
+
+def updater (temps, img): #pour l'interface graphique on crée une fonction qui fait évoluer la matrice 
+    global jeu_de_la_vie
+    #for i in range(temps): #et qui met à jour l'image correspondante
+    jeu_de_la_vie=evolution(jeu_de_la_vie)
+    img.set_data(jeu_de_la_vie)
+    return (img)        
 
 ### MAIN
     
-jeu_de_la_vie=matrice_initiale()
 temps=int(input("combien de temps la grille evolue-t-elle?"))
-fig,ax = plt.subplots() # Create a figure
-img = ax.imshow(jeu_de_la_vie, cmap=cm.RdYlGn) 
+fig,ax=plt.subplots() # Create a figure
+img=ax.imshow(jeu_de_la_vie, cmap=cm.RdYlGn) 
 #for k in range(temps):
-ani=animation.FuncAnimation(fig, updater, fargs=(img, jeu_de_la_vie), frames=temps, repeat=False, interval=200)
+ani=animation.FuncAnimation(fig, updater, fargs=(img,), frames=temps, repeat=False, interval=20)
 plt.show()
+
+
+
+
+
+
+
+
 
 
 
